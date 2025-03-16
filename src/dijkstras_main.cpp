@@ -12,4 +12,6 @@ int main() {
     // cout<<"after function"<<endl;
     for (auto e : res)cout<<e<<" ";
     // cout<<"output?"<<endl;
+    vector<int> path = extract_shortest_path(res, previous, 3);
+
 }
