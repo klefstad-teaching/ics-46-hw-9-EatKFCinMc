@@ -72,33 +72,73 @@ map<string, vector<string>> generate_adjacency_list(set<string> word_list) {
     //
     // return map;
 
-    map<string, vector<string>> m;
-    for (const auto &word : word_list) {
-        for (size_t i = 0; i < word.size(); ++i) {
-            string pattern = word;
-            pattern[i] = '*';
-            m[pattern].push_back(word);
-        }
-    }
-    // int count = 1;
+    // map<string, vector<string>> m;
+    // for (const auto &word : word_list) {
+    //     for (size_t i = 0; i < word.size(); ++i) {
+    //         string pattern = word;
+    //         pattern[i] = '*';
+    //         m[pattern].push_back(word);
+    //     }
+    // }
+    // // int count = 1;
+    // map<string, vector<string>> adjacency;
+    // for (const auto &word : word_list) {
+    //     set<string> neighbors;
+    //     for (size_t i = 0; i < word.size(); ++i) {
+    //         string pattern = word;
+    //         pattern[i] = '*';
+    //         if (m.count(pattern)) {
+    //             for (const string &candidate : m[pattern]) {
+    //                 if (candidate != word && is_adjacent(word, candidate)) {
+    //                     neighbors.insert(candidate);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     vector<string> neighbor_list(neighbors.begin(), neighbors.end());
+    //     adjacency[word] = neighbor_list;
+    //     // cout<<count++<<endl;
+    // }
+    // return adjacency;
+
     map<string, vector<string>> adjacency;
-    for (const auto &word : word_list) {
-        set<string> neighbors;
-        for (size_t i = 0; i < word.size(); ++i) {
-            string pattern = word;
-            pattern[i] = '*';
-            if (m.count(pattern)) {
-                for (const string &candidate : m[pattern]) {
-                    if (candidate != word && is_adjacent(word, candidate)) {
-                        neighbors.insert(candidate);
-                    }
+
+    for (auto &w : word_list) {
+        adjacency[w];
+    }
+    for (auto &word : word_list) {
+        for (int i = 0; i < (int)word.size(); i++) {
+            char original = word[i];
+            for (char c = 'a'; c <= 'z'; c++) {
+                if (c == original) continue;
+                string newWord = word;
+                newWord[i] = c;
+                if (word_list.count(newWord) && is_adjacent(word, newWord)) {
+                    adjacency[word].push_back(newWord);
                 }
             }
         }
-        vector<string> neighbor_list(neighbors.begin(), neighbors.end());
-        adjacency[word] = neighbor_list;
-        // cout<<count++<<endl;
+
+        for (int i = 0; i <= (int)word.size(); i++) {
+            for (char c = 'a'; c <= 'z'; c++) {
+                string newWord = word;
+                newWord.insert(newWord.begin() + i, c);
+                if (word_list.count(newWord) && is_adjacent(word, newWord)) {
+                    adjacency[word].push_back(newWord);
+                }
+            }
+        }
+
+        if (!word.empty()) {
+            for (int i = 0; i < (int)word.size(); i++) {
+                string newWord = word.substr(0, i) + word.substr(i + 1);
+                if (word_list.count(newWord) && is_adjacent(word, newWord)) {
+                    adjacency[word].push_back(newWord);
+                }
+            }
+        }
     }
+
     return adjacency;
 }
 
