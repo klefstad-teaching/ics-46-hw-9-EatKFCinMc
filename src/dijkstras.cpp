@@ -1,8 +1,5 @@
 #include "dijkstras.h"
 
-#include <bits/ranges_algo.h>
-
-
 vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& previous) {
     int num = G.numVertices;
     vector res(num, INF);
@@ -31,12 +28,22 @@ vector<int> dijkstra_shortest_path(const Graph& G, int source, vector<int>& prev
 
 }
 
+void reverse_vector(vector<int>& vec) {
+    int i = 0, j = vec.size() - 1;
+    while(i < j) {
+        int temp = vec[i];
+        vec[i] = vec[j];
+        vec[j] = temp;
+        i++;
+        j--;
+    }
+}
 
 vector<int> extract_shortest_path(const vector<int>& /*distances*/, const vector<int>& previous, int destination) {
     vector<int> path;
     for (int at = destination; at != -1; at = previous[at])
         path.push_back(at);
-    ranges::reverse(path.begin(), path.end());
+    reverse_vector(path);
     return path;
 
 }

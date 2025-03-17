@@ -62,29 +62,85 @@ bool is_adjacent(const string& word1, const string& word2) {
     return edit_distance_within(word1, word2, 1);
 }
 
+map<string, vector<string>> generate_adjacency_list(set<string> word_list) {
+    // map<string, vector<string>> map;
+    // int count = 1;
+    // for (auto e : word_list)
+    //     for (auto w : word_list)
+    //         if (is_adjacent(e, w) && e != w)
+    //             map[e].push_back(w);
+    //
+    // return map;
+
+    map<string, vector<string>> m;
+    for (const auto &word : word_list) {
+        for (size_t i = 0; i < word.size(); ++i) {
+            string pattern = word;
+            pattern[i] = '*';
+            m[pattern].push_back(word);
+        }
+    }
+    // int count = 1;
+    map<string, vector<string>> adjacency;
+    for (const auto &word : word_list) {
+        set<string> neighbors;
+        for (size_t i = 0; i < word.size(); ++i) {
+            string pattern = word;
+            pattern[i] = '*';
+            if (m.count(pattern)) {
+                for (const string &candidate : m[pattern]) {
+                    if (candidate != word && is_adjacent(word, candidate)) {
+                        neighbors.insert(candidate);
+                    }
+                }
+            }
+        }
+        vector<string> neighbor_list(neighbors.begin(), neighbors.end());
+        adjacency[word] = neighbor_list;
+        // cout<<count++<<endl;
+    }
+    return adjacency;
+}
+
+
 vector<string> generate_word_ladder(const string& begin_word, const string& end_word, const set<string>& word_list) {
+    if (!word_list.count(end_word))
+        return {};
+
     queue<vector<string>> ladder;
     ladder.push({begin_word});
     set<string> visited;
     visited.insert(begin_word);
+
+    map<string, vector<string>> map = generate_adjacency_list(word_list);
+
+    // int count = 1;
     while (!ladder.empty()) {
         vector<string> temp = ladder.front();
         ladder.pop();
         string last = temp[temp.size() - 1];
-        for (auto w : word_list) {
-            if (is_adjacent(w, last)) {
-                if (!visited.contains(w)) {
-                    visited.insert(w);
-                    vector<string >new_temp = temp;
-                    new_temp.push_back(w);
-                    if (w == end_word)return new_temp;
-                    ladder.push(new_temp);
-                }
+        if (last == end_word) return temp;
+
+        for (auto w : map[last]) {
+            if (!visited.count(w)) {
+                visited.insert(w);
+                vector<string> new_path = temp;
+                new_path.push_back(w);
+                ladder.push(new_path);
             }
+            // if (is_adjacent(w, last)) {
+            //     if (!visited.contains(w)) {
+            //         visited.insert(w);
+            //         vector<string >new_temp = temp;
+            //         new_temp.push_back(w);
+            //         if (w == end_word)return new_temp;
+            //         ladder.push(new_temp);
+            //     }
+            // }
         }
+        // cout<<count++<<endl;
     }
-    vector<string> r = {};
-    return r;
+    return {};
 }
 
 void load_words(set<string> & word_list, const string& file_name) {
@@ -95,8 +151,10 @@ void load_words(set<string> & word_list, const string& file_name) {
 }
 
 void print_word_ladder(const vector<string>& ladder) {
-    if (ladder.empty())
+    if (ladder.empty()) {
         cout<<"No word ladder found.";
+        return;
+    }
     cout<<"Word ladder found: ";
     for (auto e : ladder)
         cout<<e<<" ";
