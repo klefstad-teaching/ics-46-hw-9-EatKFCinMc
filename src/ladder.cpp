@@ -1,5 +1,7 @@
 #include "ladder.h"
 
+#include <sstream>
+
 void error(string word1, string word2, string msg) {
     cout<<"Error! "<<word1<<" "<<word2<<" "<<msg<<endl;
 }
@@ -102,5 +104,29 @@ void print_word_ladder(const vector<string>& ladder) {
 }
 
 void verify_word_ladder() {
-    cout<<"Yes"<<endl;
+    cout << "Enter a word ladder sequence separated by spaces:" << endl;
+    string line;
+
+    getline(cin, line);
+    if (line.empty()) {
+        getline(cin, line);
+    }
+    istringstream iss(line);
+    vector<string> ladder;
+    string word;
+    while (iss >> word) {
+        ladder.push_back(word);
+    }
+
+    bool valid = true;
+    for (size_t i = 1; i < ladder.size(); i++) {
+        if (!is_adjacent(ladder[i - 1], ladder[i])) {
+            valid = false;
+            break;
+        }
+    }
+    if (valid)
+        cout << "The word ladder is valid!" << endl;
+    else
+        cout << "The word ladder is not valid." << endl;
 }
